@@ -8,13 +8,17 @@ namespace fs = filesystem;
 void Lector::leeDirectorio(const string& r){
   fs::path ruta(r);
   try{
-    cout << ruta;
+    int i = 0;
     for(const auto& f : fs::recursive_directory_iterator(ruta)){
       cout << f.path() << endl;
-      string archivo = f.path().filename();	
-      archivosValidos.push_back(f.path().filename());
+      string archivo = f.path().filename();
+      if(filtro.ejecuta(archivo)){
+      filtro.ejecuta(archivo);      
+      i++;
+      }else
+	continue;
     }
-    cout << archivosValidos.size();
+    cout << "Se agregaron "<< i << "archivos";
   }catch(const fs::filesystem_error& e){
     cout << e.what() << endl;
   }

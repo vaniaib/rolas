@@ -1,15 +1,15 @@
 #ifndef LECTOR_H
 #define LECTOR_H
 #include<bits/stdc++.h>
+#include "Filtro.h"
 using namespace std;
-//Para leer el directorio y añadir a una lista los mp3 válidos
+//Para leer el directorio y añadir a la base de datos con los mp3 válidos con ayuda de Filtro
 class Lector{
-  //vector para agregar los mp3 válidos
- private:
-  vector<string> archivosValidos;
-  //recorre el directorio y agrega los archivos a la lista(vector)
- public:
+private:
+  Filtro filtro;
+  //recorre el directorio y agrega los archivos a la base de datos
+public:
   Lector(){};
   void leeDirectorio(const string& ruta);
-  };
+};
 #endif

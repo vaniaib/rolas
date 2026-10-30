@@ -1,38 +1,28 @@
-// #include <iostream>
-// #include <id3/tag.h>
-
-// using namespace std;
-
-// int main()
-// {
-//   ID3_Tag tag;
-//   tag.Link("01 Radio Intro.mp3", ID3TT_ID3V2);
-//   cout << "Numero de tramas: "
-//        << tag.NumFrames() << '\n';
-//     ID3_Tag::Iterator* iter = tag.CreateIterator();
-//     ID3_Frame* frame = nullptr;
-//     while ((frame = iter->GetNext()) != nullptr)
-//       {
-//         cout << "Trama: " << frame->GetTextID() << '\n';
-//       }
-    
-//     delete iter;
-    
-//     return 0;
-// }
-
-// #include <Filtro.h>
+#include "Filtro.h"
 #include <bits/stdc++.h>
 #include <id3/misc_support.h>
 #include <id3/tag.h>
 using namespace std;
 
-void PrintInformation(const ID3_Tag &myTag){
+bool Filtro::PrintInformation(const ID3_Tag &myTag){
+  const ID3_Frame* titulo = myTag.Find(ID3FID_TITLE);
+  cout << titulo << endl;
+  if(titulo != NULL){
+    ID3_Field* texTitulo = titulo -> GetField(ID3FN_TEXT);
+    if(texTitulo != NULL){
+      char bufferTitulo[1024];
+      texTitulo -> Get(bufferTitulo, sizeof(bufferTitulo));
+      cout << "Titulo: " << bufferTitulo << endl;
+    }
+  }else
+    return false;
   ID3_Tag::ConstIterator* iter = myTag.CreateIterator();
   const ID3_Frame* frame = NULL;
-  int i = 0;
-  while (NULL != (frame = iter->GetNext())){
-    const char* desc = frame->GetDescription();
+  cout << "|"<< iter << endl;
+  cout << "|"<< iter -> GetNext()<< endl;
+  while ((frame = iter->GetNext()) != NULL){
+    cout <<"alo";
+    // const char* desc = frame->GetDescription();
     ID3_FrameID eFrameID = frame->GetID();
     switch (eFrameID){	
     case ID3FID_ALBUM:
@@ -113,18 +103,19 @@ void PrintInformation(const ID3_Tag &myTag){
     }
   }
   delete iter;
+  return true;
 }
 
-int main(){
+bool Filtro::ejecuta(const string& filename){
   //ID3D_INIT_DOUT();
-  string filename;
-  getline(cin, filename);
   ID3_Tag myTag;
-  myTag.Link(filename.c_str(), ID3TT_ID3V2);
+  myTag.Link(filename.c_str(), ID3TT_ALL);//ó _ID3V2
+  if(!PrintInformation(myTag)){
+    return false;
+  }
   // const Mp3_Headerinfo* mp3info;
   // mp3info = myTag.GetMp3HeaderInfo();
   cout << endl << "*** Tag information for " << filename << endl;
   PrintInformation(myTag);
-  return 0;
-
+  return true;
 }
