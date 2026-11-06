@@ -11,9 +11,9 @@ void Lector::leeDirectorio(const string& r){
     int i = 0;
     for(const auto& f : fs::recursive_directory_iterator(ruta)){
       cout << f.path() << endl;
-      string archivo = f.path().filename();
+      string archivo = fs::absolute(f.path().string());
       if(filtro.ejecuta(archivo)){
-      filtro.ejecuta(archivo);      
+	//  filtro.ejecuta(archivo);      
       i++;
       }else
 	continue;

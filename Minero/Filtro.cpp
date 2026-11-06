@@ -7,21 +7,18 @@ using namespace std;
 bool Filtro::PrintInformation(const ID3_Tag &myTag){
   const ID3_Frame* titulo = myTag.Find(ID3FID_TITLE);
   cout << titulo << endl;
-  if(titulo != NULL){
-    ID3_Field* texTitulo = titulo -> GetField(ID3FN_TEXT);
-    if(texTitulo != NULL){
-      char bufferTitulo[1024];
-      texTitulo -> Get(bufferTitulo, sizeof(bufferTitulo));
-      cout << "Titulo: " << bufferTitulo << endl;
-    }
-  }else
-    return false;
+  // if(titulo != NULL){
+  //   ID3_Field* texTitulo = titulo -> GetField(ID3FN_TEXT);
+  //   if(texTitulo != NULL){
+  //     char bufferTitulo[1024];
+  //     texTitulo -> Get(bufferTitulo, sizeof(bufferTitulo));
+  //     cout << "Titulo: " << bufferTitulo << endl;
+  //   }
+  // }else
+  //   return false;
   ID3_Tag::ConstIterator* iter = myTag.CreateIterator();
   const ID3_Frame* frame = NULL;
-  cout << "|"<< iter << endl;
-  cout << "|"<< iter -> GetNext()<< endl;
   while ((frame = iter->GetNext()) != NULL){
-    cout <<"alo";
     // const char* desc = frame->GetDescription();
     ID3_FrameID eFrameID = frame->GetID();
     switch (eFrameID){	
@@ -60,9 +57,9 @@ bool Filtro::PrintInformation(const ID3_Tag &myTag){
 	char
 	  *sText = ID3_GetString(frame, ID3FN_TEXT),
 	  *sDesc = ID3_GetString(frame, ID3FN_DESCRIPTION);	 
-	  if (sDesc != nullptr && sDesc[0] != '\0')
-	    cout << "(" << sDesc << ") "
-		 << sText << endl;
+	if (sDesc != nullptr && sDesc[0] != '\0')
+	  cout << "(" << sDesc << ") "
+	       << sText << endl;
 	delete [] sText;
 	delete [] sDesc;
 	break;
@@ -86,16 +83,16 @@ bool Filtro::PrintInformation(const ID3_Tag &myTag){
       }
     default :
       continue;
-    // case ID3FID_UNIQUEFILEID:
-    //   {
-    // 	char *sOwner = ID3_GetString(frame, ID3FN_OWNER);
-    // 	size_t nDataSize = frame->GetField(ID3FN_DATA)->Size();
-    // 	cout << sOwner << ", " << nDataSize
-    // 	     << " bytes" << endl;
-    // 	delete [] sOwner;
-    // 	break;
-    //   }
-  }
+      // case ID3FID_UNIQUEFILEID:
+      //   {
+      // 	char *sOwner = ID3_GetString(frame, ID3FN_OWNER);
+      // 	size_t nDataSize = frame->GetField(ID3FN_DATA)->Size();
+      // 	cout << sOwner << ", " << nDataSize
+      // 	     << " bytes" << endl;
+      // 	delete [] sOwner;
+      // 	break;
+      //   }
+    }
     if(eFrameID != ID3FID_COMMENT){
       char* texto = ID3_GetString(frame, ID3FN_TEXT);
       cout << (texto ? texto : "") << '\n';
@@ -109,8 +106,17 @@ bool Filtro::PrintInformation(const ID3_Tag &myTag){
 bool Filtro::ejecuta(const string& filename){
   //ID3D_INIT_DOUT();
   ID3_Tag myTag;
+  ifstream f(filename, ios::binary);
+
+  cout << "Archivo abierto: " << f.is_open() << endl;
+  cout << "Ruta: " << filename << endl;
+
+  f.close();
   myTag.Link(filename.c_str(), ID3TT_ALL);//ó _ID3V2
-  if(!PrintInformation(myTag)){
+  int i = myTag.NumFrames();
+  cout << "Frames encontrados: "
+       << i << endl;
+  if(i == 0){
     return false;
   }
   // const Mp3_Headerinfo* mp3info;
