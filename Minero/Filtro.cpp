@@ -5,25 +5,16 @@
 using namespace std;
 
 bool Filtro::PrintInformation(const ID3_Tag &myTag){
-  const ID3_Frame* titulo = myTag.Find(ID3FID_TITLE);
-  cout << titulo << endl;
-  // if(titulo != NULL){
-  //   ID3_Field* texTitulo = titulo -> GetField(ID3FN_TEXT);
-  //   if(texTitulo != NULL){
-  //     char bufferTitulo[1024];
-  //     texTitulo -> Get(bufferTitulo, sizeof(bufferTitulo));
-  //     cout << "Titulo: " << bufferTitulo << endl;
-  //   }
-  // }else
-  //   return false;
   ID3_Tag::ConstIterator* iter = myTag.CreateIterator();
   const ID3_Frame* frame = NULL;
+  int i = 0;
   while ((frame = iter->GetNext()) != NULL){
+    i++;
     // const char* desc = frame->GetDescription();
     ID3_FrameID eFrameID = frame->GetID();
     switch (eFrameID){	
     case ID3FID_ALBUM:
-      cout << "Album";
+      cout << "Album: ";
       break;
     case ID3FID_CONTENTTYPE:
       cout << "Genero: ";
@@ -35,7 +26,7 @@ bool Filtro::PrintInformation(const ID3_Tag &myTag){
       cout << "Artista principal: ";
       break;
     case ID3FID_BAND:
-      cout << "Banda";
+      cout << "Banda: ";
       break;
     case ID3FID_COMPOSER:
       cout << "Compositor: ";
@@ -50,7 +41,7 @@ bool Filtro::PrintInformation(const ID3_Tag &myTag){
       cout << "Numero de disco: ";
       break;
     case ID3FID_YEAR:
-      cout << "año";
+      cout << "Año: ";
       break;
     case ID3FID_COMMENT:
       {
@@ -98,30 +89,56 @@ bool Filtro::PrintInformation(const ID3_Tag &myTag){
       cout << (texto ? texto : "") << '\n';
       delete[] texto;
     }
+    cout << "entra al while :"<< i << endl;
   }
   delete iter;
   return true;
 }
-
-bool Filtro::ejecuta(const string& filename){
-  //ID3D_INIT_DOUT();
-  ID3_Tag myTag;
+bool Filtro:: valida(const string& filename){
+  //primero vefr que abra
   ifstream f(filename, ios::binary);
-
-  cout << "Archivo abierto: " << f.is_open() << endl;
-  cout << "Ruta: " << filename << endl;
-
-  f.close();
-  myTag.Link(filename.c_str(), ID3TT_ALL);//ó _ID3V2
-  int i = myTag.NumFrames();
-  cout << "Frames encontrados: "
-       << i << endl;
-  if(i == 0){
+  if(!f.is_open()){
+    cout << ROJO << "[ERROR]: "<< "NO SE PUDO ABRIR EL ARCHIVO" << filename  << RESET << endl;
+    f.close();
     return false;
   }
+  f.close();
+  //luego ver que tenga metadatos por leer con la etiqueta id3 , si tiene 0 es inválido
+  //ID3_Tag myTag;
+  myTag.Clear();
+  myTag.Link(filename.c_str(), ID3TT_ALL);//ó _ID3V2
+  int i = myTag.NumFrames();
+  if(i == 0){
+    cout << ROJO << "[ERROR]: "<< "NO HAY METADATOS QUE LEER " << filename  << RESET << endl;
+    return false;
+  }
+  return true;
+}
+bool Filtro::ejecuta(const string& filename, const string& nomCancion){
+  //ID3D_INIT_DOUT();
+  if(valida(filename)){
+  //cout << "Frames encontrados: " << i << endl;
+  //const ID3_Frame* titulo = myTag.Find(ID3FID_TITLE);
+  //  cout << titulo << endl;
+  // if(titulo == NULL){
+  //   ID3_Field* texTitulo = titulo -> GetField(ID3FN_TEXT);
+  //   if(texTitulo != NULL){
+  //     char bufferTitulo[1024];
+  //     texTitulo -> Get(bufferTitulo, sizeof(bufferTitulo));
+  //     cout << "Titulo: " << bufferTitulo << endl;
+  //   }
+  // }else
+  //   return false;
+    //    cout << endl << "*** Tag information for " << filename << endl;
+    cout << AZUL << "[AGREGADO]: "<< filename  << RESET << endl;
+  // if(i == 0){
+  //   return false;
+  // }
+  // }
   // const Mp3_Headerinfo* mp3info;
   // mp3info = myTag.GetMp3HeaderInfo();
-  cout << endl << "*** Tag information for " << filename << endl;
-  PrintInformation(myTag);
+  PrintInformation(myTag);  
   return true;
+  }
+  return false;
 }
