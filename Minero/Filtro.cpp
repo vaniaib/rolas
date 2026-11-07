@@ -98,7 +98,7 @@ bool Filtro:: valida(const string& filename){
   //primero vefr que abra
   ifstream f(filename, ios::binary);
   if(!f.is_open()){
-    cout << ROJO << "[ERROR]: "<< "NO SE PUDO ABRIR EL ARCHIVO" << filename  << RESET << endl;
+    cout << MAGENTA << "[ERROR]: "<< "NO SE PUDO ABRIR EL ARCHIVO" << filename  << RESET << endl;
     f.close();
     return false;
   }
@@ -109,7 +109,7 @@ bool Filtro:: valida(const string& filename){
   myTag.Link(filename.c_str(), ID3TT_ALL);//ó _ID3V2
   int i = myTag.NumFrames();
   if(i == 0){
-    cout << ROJO << "[ERROR]: "<< "NO HAY METADATOS QUE LEER " << filename  << RESET << endl;
+    cout << MAGENTA << "[ERROR]: "<< "NO HAY METADATOS QUE LEER " << filename  << RESET << endl;
     return false;
   }
   return true;
@@ -130,7 +130,7 @@ bool Filtro::ejecuta(const string& filename, const string& nomCancion){
   // }else
   //   return false;
     //    cout << endl << "*** Tag information for " << filename << endl;
-    cout << AZUL << "[AGREGADO]: "<< filename  << RESET << endl;
+    cout << CYAN << "[AGREGADO]: "<< filename  << RESET << endl;
   // if(i == 0){
   //   return false;
   // }
