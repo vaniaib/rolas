@@ -12,10 +12,10 @@ language: 'cpp'
 )
 
 clasesc = [
-'Minero/Filtro.cpp',
-'Minero/Lector.cpp',
-'Minero/Minero.cpp',
-'Minero/BasedeDatos.cpp'
+'src/Minero/Filtro.cpp',
+'src/Minero/Lector.cpp',
+'src/Minero/Minero.cpp',
+'src/Minero/BasedeDatos.cpp'
 ]      				
 
 executable('Minero', sources : clasesc, dependencies : [id3_dep, sqlite_dep])
