@@ -12,18 +12,24 @@ bool Filtro::PrintInformation(const ID3_Tag &myTag){
     i++;
     // const char* desc = frame->GetDescription();
     ID3_FrameID eFrameID = frame->GetID();
-    switch (eFrameID){	
+    char* texto = ID3_GetString(frame, ID3FN_TEXT);
+    if(!texto)
+      continue;
+    switch (eFrameID){ 
     case ID3FID_ALBUM:
       cout << "Album: ";
-      break;
+      cancion.album = texto;
+	break;
     case ID3FID_CONTENTTYPE:
       cout << "Genero: ";
+      cancion.genre = texto;
       break;
     case ID3FID_TITLE:
       cout << "Titulo: ";
       break;
     case ID3FID_LEADARTIST:
       cout << "Artista principal: ";
+      cancion.performer = texto;
       break;
     case ID3FID_BAND:
       cout << "Banda: ";
@@ -36,12 +42,14 @@ bool Filtro::PrintInformation(const ID3_Tag &myTag){
       break;
     case ID3FID_TRACKNUM:
       cout << "numero de cancion";
+      cancion.track = atoi(texto);
       break;
     case ID3FID_PARTINSET:
       cout << "Numero de disco: ";
       break;
     case ID3FID_YEAR:
       cout << "Año: ";
+      cancion.year = atoi(texto);
       break;
     case ID3FID_COMMENT:
       {
@@ -84,6 +92,7 @@ bool Filtro::PrintInformation(const ID3_Tag &myTag){
       // 	break;
       //   }
     }
+    delete[] texto;
     if(eFrameID != ID3FID_COMMENT){
       char* texto = ID3_GetString(frame, ID3FN_TEXT);
       cout << (texto ? texto : "") << '\n';
@@ -117,28 +126,38 @@ bool Filtro:: valida(const string& filename){
 bool Filtro::ejecuta(const string& filename, const string& nomCancion){
   //ID3D_INIT_DOUT();
   if(valida(filename)){
-  //cout << "Frames encontrados: " << i << endl;
-  //const ID3_Frame* titulo = myTag.Find(ID3FID_TITLE);
-  //  cout << titulo << endl;
-  // if(titulo == NULL){
-  //   ID3_Field* texTitulo = titulo -> GetField(ID3FN_TEXT);
-  //   if(texTitulo != NULL){
-  //     char bufferTitulo[1024];
-  //     texTitulo -> Get(bufferTitulo, sizeof(bufferTitulo));
-  //     cout << "Titulo: " << bufferTitulo << endl;
-  //   }
-  // }else
-  //   return false;
+    cancion.path = filename;
+    //cout << "Frames encontrados: " << i << endl;
+    const ID3_Frame* titulo = myTag.Find(ID3FID_TITLE);
+    if(titulo == NULL)
+      cancion.title = nomCancion;
+    else{
+      char* narchivo = ID3_GetString(titulo, ID3FN_TEXT);
+      cancion.title = narchivo;
+      delete[] narchivo;
+    }
+    //   ID3_Field* texTitulo = titulo -> GetField(ID3FN_TEXT);
+    //   if(texTitulo != NULL){
+    //     char bufferTitulo[1024];
+    //     texTitulo -> Get(bufferTitulo, sizeof(bufferTitulo));
+    //     cout << "Titulo: " << bufferTitulo << endl;
+    //   }
+    // }else
+    //   return false;
     //    cout << endl << "*** Tag information for " << filename << endl;
     cout << CYAN << "[AGREGADO]: "<< filename  << RESET << endl;
-  // if(i == 0){
-  //   return false;
-  // }
-  // }
-  // const Mp3_Headerinfo* mp3info;
-  // mp3info = myTag.GetMp3HeaderInfo();
-  PrintInformation(myTag);  
-  return true;
+    // if(i == 0){
+    //   return false;
+    // }
+    // }
+    // const Mp3_Headerinfo* mp3info;
+    // mp3info = myTag.GetMp3HeaderInfo();
+    PrintInformation(myTag);
+    BasedeDatos bdd;
+    bdd.conecta("musica.db");
+    bdd.agrega(cancion, filename);
+    bdd.cierra();
+    return true;
   }
   return false;
 }

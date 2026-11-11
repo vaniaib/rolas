@@ -150,7 +150,7 @@ bool BasedeDatos:: agrega(const campoCancion& campo, const string& ruta){
   //para agregar ahora si en rolas
   //ver si ya está usando path
   sqlite3_stmt* stmt = nullptr;
-  const char* sqlBuscar = "SELECT id_song FROM songs WHERE path = ?;";
+  const char* sqlBuscar = "SELECT id_rola FROM rolas WHERE path = ?;";
   //ver que no haya error
   if(sqlite3_prepare_v2(bdd, sqlBuscar, -1, &stmt, nullptr) != SQLITE_OK) {
     cerr << sqlite3_errmsg(bdd) << endl;

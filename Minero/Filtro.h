@@ -1,5 +1,6 @@
 #ifndef FILTRO_H
 #define FILTRO_H
+#include "BasedeDatos.h"
 #include<bits/stdc++.h>
 #include <id3/misc_support.h>
 #include <id3/tag.h>
@@ -10,6 +11,7 @@ using namespace std;
 //Para validar los mp3 y guardarlos
 class Filtro{
 public:
+  campoCancion cancion;
   ID3_Tag myTag;
   Filtro(){};
   //imprime la info y ve q al menos tenga el titulo, si no no lo considera válido
