@@ -21,8 +21,8 @@ class BasedeDatos{
 private:
   
   sqlite3* bdd;
-  bool getPerformer(const string& nombre,int& id_performer);
-  bool getAlbum(const string& path,int year,int& id_album);
+  bool getPerformer(const string& nombre,int id_type, int& id_performer);
+  bool getAlbum(const string& nombrealbum ,int year,int& id_album);
   
 public:
   
