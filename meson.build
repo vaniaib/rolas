@@ -12,6 +12,7 @@ language: 'cpp'
 )
 
 clasesc = [
+'src/Minero/Aplicacion.cpp',
 'src/Minero/Filtro.cpp',
 'src/Minero/Lector.cpp',
 'src/Minero/Minero.cpp',
