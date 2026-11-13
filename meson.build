@@ -11,12 +11,18 @@ add_project_arguments(
 language: 'cpp'
 )
 
+directorio_rolas = join_paths(
+    get_option('datadir'),
+    'rolas'
+)
+
+
 clasesc = [
 'src/Minero/Aplicacion.cpp',
 'src/Minero/Filtro.cpp',
 'src/Minero/Lector.cpp',
 'src/Minero/Minero.cpp',
 'src/Minero/BasedeDatos.cpp'
-]      				
-
-executable('Minero', sources : clasesc, dependencies : [id3_dep, sqlite_dep])
+]
+ 
+executable('Minero', sources : clasesc, dependencies : [id3_dep, sqlite_dep], install : true, install_dir : directorio_rolas)	
