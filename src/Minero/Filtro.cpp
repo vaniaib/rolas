@@ -2,9 +2,20 @@
 #include <bits/stdc++.h>
 #include <id3/misc_support.h>
 #include <id3/tag.h>
+namespace fs = filesystem;
 using namespace std;
 
-bool Filtro::PrintInformation(const ID3_Tag &myTag){
+string Filtro::getrutabdd(){
+  const char* home = getenv("HOME");
+  if(home == nullptr){
+    throw runtime_error("No se encontró HOME");
+  }
+  fs::path directorio = fs::path(home) / ".local/share/rolas";
+  fs::create_directories(directorio);
+  return (directorio / "rolas.db").string();
+}
+
+bool Filtro::PrintInformation(const ID3_Tag &myTag, const string& filename){
   ID3_Tag::ConstIterator* iter = myTag.CreateIterator();
   const ID3_Frame* frame = NULL;
   int i = 0;
@@ -12,6 +23,44 @@ bool Filtro::PrintInformation(const ID3_Tag &myTag){
     i++;
     // const char* desc = frame->GetDescription();
     ID3_FrameID eFrameID = frame->GetID();
+    if(eFrameID == ID3FID_PICTURE){
+	ID3_Field* pField = frame->GetField(ID3FN_DATA);
+	size_t nDataSize = pField->Size();
+	char *sMimeType = ID3_GetString(frame, ID3FN_MIMETYPE);
+    if(nDataSize > 0){
+      vector<uchar> imageData(nDataSize);
+        pField->Get(imageData.data(), nDataSize);
+        string extension = "";
+        if(sMimeType != nullptr && string(sMimeType) == "image/png")
+	  extension = ".png";       
+	else
+	  extension = ".jpg";
+        fs::path ruta(filename);
+	string nombre = cancion.album;       
+	if(nombre.empty())
+	  nombre = ruta.parent_path().filename().string();	
+	const char* home = getenv("HOME");
+	fs::path directorio = fs::path(home) /".local/share/rolas/imagenes";
+	fs::create_directories(directorio);
+	fs::path portada = directorio / (nombre + extension);
+	if(fs::exists(portada)){
+	  delete[] sMimeType;
+	  break;
+	}	
+        ofstream imageFile(portada, ios::binary);
+        if(imageFile.is_open()){
+	  imageFile.write(reinterpret_cast<const char*>(imageData.data()), nDataSize);	   
+	  cout << "Portada extraida: "
+                 << portada << endl;
+        }
+        else{
+            cout << "Error al guardar la portada" << endl;
+        }
+        imageFile.close();
+    }
+    delete[] sMimeType;
+    //   continue;
+    }
     char* texto = ID3_GetString(frame, ID3FN_TEXT);
     if(!texto)
       continue;
@@ -19,7 +68,7 @@ bool Filtro::PrintInformation(const ID3_Tag &myTag){
     case ID3FID_ALBUM:
       cout << "Album: ";
       cancion.album = texto;
-	break;
+      break;
     case ID3FID_CONTENTTYPE:
       cout << "Genero: ";
       cancion.genre = texto;
@@ -65,19 +114,58 @@ bool Filtro::PrintInformation(const ID3_Tag &myTag){
       }
     case ID3FID_PICTURE:
       {
-	char
-	  *sMimeType = ID3_GetString(frame, ID3FN_MIMETYPE),
-	  *sDesc     = ID3_GetString(frame, ID3FN_DESCRIPTION),
-	  *sFormat   = ID3_GetString(frame, ID3FN_IMAGEFORMAT);
-	size_t
-	  nPicType   = frame->GetField(ID3FN_PICTURETYPE)->Get(),
-	  nDataSize  = frame->GetField(ID3FN_DATA)->Size();
-	cout << "(" << sDesc << ")[" << sFormat << ", "
-	     << nPicType << "]: " << sMimeType << ", " << nDataSize
-	     << " bytes" << endl;
-	delete [] sMimeType;
-	delete [] sDesc;
-	delete [] sFormat;
+    // 	cout << "\n[DEBUG] Se encontró un frame PICTURE\n";
+    // 	ID3_Field* pField = frame->GetField(ID3FN_DATA);
+    // 	size_t nDataSize = pField->Size();
+    // 	char *sMimeType = ID3_GetString(frame, ID3FN_MIMETYPE);
+    // if(nDataSize > 0){
+    //   vector<uchar> imageData(nDataSize);
+    //     pField->Get(imageData.data(), nDataSize);
+    //     string extension = "";
+    //     if(sMimeType != nullptr && string(sMimeType) == "image/png")
+    // 	  extension = ".png";       
+    // 	else
+    // 	  extension = ".jpg";
+    //     fs::path ruta(filename);
+    //     string nombre = ruta.stem().string();
+    // 	const char* home = getenv("HOME");
+    // 	fs::path directorio = fs::path(home) /".local/share/rolas/imagenes";
+    // 	fs::create_directories(directorio);
+    // 	fs::path portada = directorio / (nombre + extension);
+    //     ofstream imageFile(portada, ios::binary);
+    //     if(imageFile.is_open()){
+    //         imageFile.write(
+    //             reinterpret_cast<const char*>(imageData.data()),
+    //             nDataSize
+    //         );
+
+    //         cout << "Portada extraida: "
+    //              << portada << endl;
+    //     }
+    //     else
+    //     {
+    //         cout << "Error al guardar la portada" << endl;
+    //     }
+
+    //     imageFile.close();
+    // }
+
+    // delete[] sMimeType;
+
+     
+
+    //    char *sMimeType = ID3_GetString(frame, ID3FN_MIMETYPE),
+	//   *sDesc     = ID3_GetString(frame, ID3FN_DESCRIPTION),
+	//   *sFormat   = ID3_GetString(frame, ID3FN_IMAGEFORMAT);
+	// size_t
+	//   nPicType   = frame->GetField(ID3FN_PICTURETYPE)->Get(),
+	//   nDataSize  = frame->GetField(ID3FN_DATA)->Size();
+	// cout << "(" << sDesc << ")[" << sFormat << ", "
+	//      << nPicType << "]: " << sMimeType << ", " << nDataSize
+	//      << " bytes" << endl;
+	// delete [] sMimeType;
+	// delete [] sDesc;
+	// delete [] sFormat;
 	break;
       }
     default :
@@ -98,7 +186,6 @@ bool Filtro::PrintInformation(const ID3_Tag &myTag){
       cout << (texto ? texto : "") << '\n';
       delete[] texto;
     }
-    cout << "entra al while :"<< i << endl;
   }
   delete iter;
   return true;
@@ -152,9 +239,16 @@ bool Filtro::ejecuta(const string& filename, const string& nomCancion){
     // }
     // const Mp3_Headerinfo* mp3info;
     // mp3info = myTag.GetMp3HeaderInfo();
-    PrintInformation(myTag);
+    PrintInformation(myTag, filename);
     BasedeDatos bdd;
-    bdd.conecta("bdd/rolas.db");
+    //
+    //    fs::path route = fs::absolute("bdd/rolas.db");
+    string rutaString = getrutabdd();
+    cout << "ola "<< getrutabdd();
+    cout << "bai "<< rutaString;
+    bdd.conecta(rutaString);
+    //
+    //bdd.conecta("bdd/rolas.db");
     bdd.agrega(cancion, filename);
     bdd.cierra();
     return true;

@@ -14,8 +14,10 @@ public:
   campoCancion cancion;
   ID3_Tag myTag;
   Filtro(){};
+  //obtiene la ruta de la base de datos
+  string getrutabdd();
   //imprime la info y ve q al menos tenga el titulo, si no no lo considera válido
-  bool PrintInformation(const ID3_Tag &myTag);
+  bool PrintInformation(const ID3_Tag &myTag, const string& filename);
   //valida que el archivo abra e imprime en rojo si no, si es válido continua
   bool valida(const string& filename);
   //lee y obtiene los datos
