@@ -8,7 +8,6 @@ BasedeDatos::BasedeDatos(): bdd(nullptr){}
 BasedeDatos::~BasedeDatos(){
   cierra();
 }
-
 void BasedeDatos:: cierra(){
   if(bdd != nullptr){
     sqlite3_close(bdd);
@@ -18,7 +17,7 @@ void BasedeDatos:: cierra(){
 
 bool BasedeDatos:: conecta(const string& ruta){
   if(sqlite3_open(ruta.c_str(), &bdd) != SQLITE_OK){
-    cout << "Algo salió mal con: " << sqlite3_errmsg(bdd) << endl;
+    cout << "Algo salió mal al conectar: " << sqlite3_errmsg(bdd) << endl;
     cierra();
     return false;
   }
@@ -122,7 +121,7 @@ bool BasedeDatos::getAlbum(const string& nombre,int year,int& id_album){
 
 bool BasedeDatos:: agrega(const campoCancion& campo, const string& ruta){
   if(bdd == nullptr){
-    cout << "Algo salió mal" << endl;
+    cout << "Algo salió mal al intentar agregar" << endl;
     return false;
   }
   if(campo.path.empty()){
