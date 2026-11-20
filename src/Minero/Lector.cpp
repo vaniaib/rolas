@@ -18,7 +18,7 @@ void Lector::leeDirectorio(const string& r){
       }else
 	continue;
     }
-    cout << "Se agregaron "<< i << " archivos";
+    cout << "Se agregaron "<< i << " archivos"<< endl;
   }catch(const fs::filesystem_error& e){
     cout << e.what() << endl;
   }

@@ -22,9 +22,10 @@ bool Filtro::PrintInformation(const ID3_Tag &myTag, const string& filename){
     ID3_FrameID eFrameID = frame->GetID();
     fs::path ruta(filename);
     string nombre = cancion.album;
-    	if(nombre.empty()){
-	  nombre = ruta.parent_path().filename().string();
-	  cancion.album = nombre;	 
+    if(nombre.empty()){
+      nombre = ruta.parent_path().filename().string();
+      cancion.album = nombre;
+    }
     //para sacar la foto y tambien asignar lo del album si es null, si no se vuelve a asignar el nombre en el switch(eso está arriba jeje)
     if(eFrameID == ID3FID_PICTURE){
       ID3_Field* pField = frame->GetField(ID3FN_DATA);
@@ -32,13 +33,13 @@ bool Filtro::PrintInformation(const ID3_Tag &myTag, const string& filename){
       char *sMimeType = ID3_GetString(frame, ID3FN_MIMETYPE);
       if(nDataSize > 0){
 	vector<uchar> imageData(nDataSize);
-        pField->Get(imageData.data(), nDataSize);
-        string extension = "";
-        if(sMimeType != nullptr && string(sMimeType) == "image/png")
+	pField->Get(imageData.data(), nDataSize);
+	string extension = "";
+	if(sMimeType != nullptr && string(sMimeType) == "image/png")
 	  extension = ".png";       
 	else
 	  extension = ".jpg";
-        // fs::path ruta(filename);
+	// fs::path ruta(filename);
 	// string nombre = cancion.album;
 	//aqui veo que sea null el album ys si es asigno el nombre del directorio donde está
 	// if(nombre.empty()){
@@ -56,10 +57,10 @@ bool Filtro::PrintInformation(const ID3_Tag &myTag, const string& filename){
 	  delete[] sMimeType;
 	  break;
 	}	
-        ofstream imageFile(portada, ios::binary);
-        if(imageFile.is_open())
+	ofstream imageFile(portada, ios::binary);
+	if(imageFile.is_open())
 	  imageFile.write(reinterpret_cast<const char*>(imageData.data()), nDataSize);	   
-        imageFile.close();
+	imageFile.close();
       }
       delete[] sMimeType;
       //   continue;
@@ -123,7 +124,7 @@ bool Filtro::PrintInformation(const ID3_Tag &myTag, const string& filename){
       char* texto = ID3_GetString(frame, ID3FN_TEXT);
       cout << (texto ? texto : "") << '\n';
       delete[] texto;
-    }
+    }	
   }
   delete iter;
   return true;
@@ -172,3 +173,4 @@ bool Filtro::ejecuta(const string& filename, const string& nomCancion){
   }
   return false;
 }
+
