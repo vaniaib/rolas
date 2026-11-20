@@ -20,6 +20,12 @@ bool Filtro::PrintInformation(const ID3_Tag &myTag, const string& filename){
   const ID3_Frame* frame = NULL;
   while ((frame = iter->GetNext()) != NULL){
     ID3_FrameID eFrameID = frame->GetID();
+    fs::path ruta(filename);
+    string nombre = cancion.album;
+    	if(nombre.empty()){
+	  nombre = ruta.parent_path().filename().string();
+	  cancion.album = nombre;	 
+    //para sacar la foto y tambien asignar lo del album si es null, si no se vuelve a asignar el nombre en el switch(eso está arriba jeje)
     if(eFrameID == ID3FID_PICTURE){
       ID3_Field* pField = frame->GetField(ID3FN_DATA);
       size_t nDataSize = pField->Size();
@@ -32,10 +38,16 @@ bool Filtro::PrintInformation(const ID3_Tag &myTag, const string& filename){
 	  extension = ".png";       
 	else
 	  extension = ".jpg";
-        fs::path ruta(filename);
-	string nombre = cancion.album;       
-	if(nombre.empty())
-	  nombre = ruta.parent_path().filename().string();	
+        // fs::path ruta(filename);
+	// string nombre = cancion.album;
+	//aqui veo que sea null el album ys si es asigno el nombre del directorio donde está
+	// if(nombre.empty()){
+	//   nombre = ruta.parent_path().filename().string();
+	//   cancion.album = nombre;
+	//   cout << "no identificó el elbum y la carpeta es:" << nombre;
+	// }else{
+	//   cout << "si se identificó un album y es: " << nombre;
+	// }
 	const char* home = getenv("HOME");
 	fs::path directorio = fs::path(home) /".local/share/rolas/imagenes";
 	fs::create_directories(directorio);
@@ -137,6 +149,7 @@ bool Filtro:: valida(const string& filename){
   return true;
 }
 bool Filtro::ejecuta(const string& filename, const string& nomCancion){
+  cancion = campoCancion{};
   //ID3D_INIT_DOUT();
   if(valida(filename)){
     cancion.path = filename;
