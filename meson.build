@@ -8,6 +8,7 @@ id3_dep = cpp.find_library('id3', required : true)
 
 add_project_arguments(
 '-DBDD_DIR="' + meson.project_source_root() + '/bdd"',
+ '-Wno-delete-non-virtual-dtor',
 language: 'cpp'
 )
 
