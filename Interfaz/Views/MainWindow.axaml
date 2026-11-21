@@ -1,0 +1,215 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:Interfaz.ViewModels"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="Interfaz.Views.MainWindow"
+        x:DataType="vm:MainViewModel"
+        Icon="/Assets/avalonia-logo.ico"
+        Title="Rolas"
+        Background="#EFBAB3"
+	ExtendClientAreaToDecorationsHint="True">
+
+   <Grid ColumnDefinitions="80,*, 350">
+   	 <Border Grid.Column="0" 
+            Background="#C25F73"
+	    CornerRadius="20"
+            Margin="8"
+            ClipToBounds="True">
+	  <StackPanel Spacing="20" Margin="8">
+
+
+            <Button Width="50"
+               Height="50"
+               HorizontalAlignment="Center"
+               VerticalAlignment="Top"
+               Background="Transparent"
+               BorderThickness="0"
+               ToolTip.Tip="Minar"
+	        Command="{Binding seleccionaRutaCommand}">
+                <StackPanel Orientation="Horizontal"
+                            Spacing="10">
+            <Image Source="/Assets/icono-dir.png"
+               Width="45"
+               Height="45"
+               Stretch="Uniform"/>
+           </StackPanel>
+    	    </Button>		    
+       <Button Content="Rolas"
+       ToolTip.Tip="Mostrar rolas"	
+        Command="{Binding mostrarTablaCommand}"
+        CommandParameter="rolas"/>
+
+	<Button Content="albums"
+		ToolTip.Tip="Mostrar albumes"	
+        	Command="{Binding mostrarTablaCommand}"
+        	CommandParameter="albums"/>
+
+	<Button Content="performer"
+		ToolTip.Tip="Mostrar performer"	
+	        Command="{Binding mostrarTablaCommand}"
+        	CommandParameter="performers"/>
+
+	<Button Content="persons"
+		ToolTip.Tip="Mostrar persons"	
+        	Command="{Binding mostrarTablaCommand}"
+        	CommandParameter="persons"/>
+
+	<Button Content="groups"
+		ToolTip.Tip="Mostrar groups"
+        	Command="{Binding mostrarTablaCommand}"
+        	CommandParameter="groups"/>
+	<Button Content="type"
+		ToolTip.Tip="Mostrar type"	
+        	Command="{Binding mostrarTablaCommand}"
+        	CommandParameter="types"/>
+
+    <TextBlock Text="Procesando..."
+    	       IsVisible="{Binding Procesando}"
+               HorizontalAlignment="Center"
+               VerticalAlignment="Center"/>
+ </StackPanel>
+  </Border>
+
+
+  <Grid Grid.Column="1" Margin="25" RowDefinitions="Auto,*">
+  	<StackPanel Grid.Row="0" Spacing="10">
+	 <TextBlock Text="{Binding RutaaMinar, StringFormat='Último minado: {0}'}"
+	 	     FontWeight="Bold"
+     	       	     HorizontalAlignment="Center"
+     	       	     VerticalAlignment="Bottom"/>
+	 <TextBox PlaceholderText="Buscar..."
+             	  Text="{Binding Busqueda}"/>
+	 <TextBlock Text="Procesando archivos..."
+               IsVisible="{Binding Procesando}"
+                       FontSize="16"/>
+        </StackPanel>
+
+   <Grid Grid.Row="1" Margin="0,20,0,0">
+<ScrollViewer IsVisible="{Binding MostrandoRolas}">
+        <ItemsControl ItemsSource="{Binding Rolas}">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <WrapPanel Orientation="Horizontal"/>
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <Button
+                        Command="{Binding $parent[ItemsControl].DataContext.seleccionarRolaCommand}"
+                        CommandParameter="{Binding}"
+                        Background="#F8D8D3"
+                        BorderThickness="0"
+                        CornerRadius="15"
+                        Width="165"
+                        Margin="7"
+                        Padding="10">
+                        <StackPanel Spacing="7">
+                        <Border Width="140"
+                                Height="140"
+                                CornerRadius="10"
+                               Background="#C25F73">
+
+          <Image Source="{Binding Portada}"
+             Stretch="UniformToFill"/>
+	     </Border>	
+
+       <TextBlock Text="{Binding Title}"
+                  FontWeight="Bold"
+                  TextTrimming="CharacterEllipsis"/>
+                  <TextBlock Text="{Binding Performer}"
+                  FontSize="12"
+                  TextTrimming="CharacterEllipsis"/>
+        <TextBlock Text="{Binding Album}"
+                   FontSize="11"
+                   Opacity="0.7"/>
+        </StackPanel>
+        </Button>
+        </DataTemplate>
+          </ItemsControl.ItemTemplate>
+        </ItemsControl>
+    </ScrollViewer>
+    <ScrollViewer IsVisible="{Binding MostrandoLista}">
+        <ItemsControl ItemsSource="{Binding Elementos}">
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <Button
+                        Command="{Binding $parent[ItemsControl].DataContext.seleccionarElementoCommand}"
+                        CommandParameter="{Binding}"
+                        Background="#F8D8D3"
+                        BorderThickness="0"
+                        CornerRadius="12"
+                        Margin="5"
+                        Padding="15">
+
+                        <StackPanel Spacing="5">
+
+                            <TextBlock Text="{Binding Nombre}"
+                                       FontSize="17"
+                                       FontWeight="Bold"
+                                       Foreground="#713D4B"/>
+
+                            <TextBlock Text="{Binding Detalle}"
+                                       FontSize="12"
+                                       Opacity="0.7"/>
+
+                        </StackPanel>
+
+                    </Button>
+
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+
+        </ItemsControl>
+
+    </ScrollViewer>
+
+    </Grid>
+ </Grid>	
+   
+   <Border Grid.Column="2">
+        <Border.Background>
+            <ImageBrush Source="/Assets/fondocolumna3.png"
+                        Stretch="UniformToFill"/>
+        </Border.Background>
+  <ScrollViewer>
+            <StackPanel Spacing="12">
+                <TextBlock Text="Editar canción"
+                           FontSize="24"
+                           FontWeight="Bold"
+                           Foreground="#713D4B"/>
+                <Border Height="180"
+                        Background="#C25F73"
+                        CornerRadius="15">
+                    <Image Source="{Binding RolaSeleccionada.Portada}"
+                           Stretch="UniformToFill"/>
+                </Border>
+                <Button Content="Seleccionar imagen"
+                        Command="{Binding seleccionarImagenCommand}"/>
+                <TextBlock Text="Título"/>
+                <TextBox Text="{Binding RolaSeleccionada.Title}"/>
+                <TextBlock Text="Artista"/>
+                <TextBox Text="{Binding RolaSeleccionada.Performer}"/>
+                <TextBlock Text="Álbum"/>
+                <TextBox Text="{Binding RolaSeleccionada.Album}"/>
+                <TextBlock Text="Género"/>
+                <TextBox Text="{Binding RolaSeleccionada.Genre}"/>
+                <TextBlock Text="Año"/>
+                <NumericUpDown Value="{Binding RolaSeleccionada.Year}"/>
+                <TextBlock Text="Número de pista"/>
+                <NumericUpDown Value="{Binding RolaSeleccionada.Track}"/>
+                <Button Content="Guardar cambios"
+                        Command="{Binding guardarRolaCommand}"
+                        Background="#C25F73"
+                        Foreground="White"/>
+
+            </StackPanel>
+
+        </ScrollViewer>
+
+    </Border>
+
+</Grid>
+
+</Window>
