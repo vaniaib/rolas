@@ -6,6 +6,7 @@ namespace fs = filesystem;
 using namespace std;
 
 string Filtro::getrutabdd(){
+  
   const char* home = getenv("HOME");
   if(home == nullptr){
     throw runtime_error("No se encontró HOME");
